@@ -1,4 +1,5 @@
 static/
 template/
-var/*
+var/*.db
+var/*.pl
 /*.html

@@ -1,4 +1,5 @@
 all:
+include lib/makefile/init.mk
 include lib/makefile/file.mk
 include lib/makefile/host.mk
 include lib/makefile/ssh.mk
