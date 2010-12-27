@@ -1,0 +1,4 @@
+#!/bin/sh
+function sblog {
+    (cd $SBLOGDIR && ./bin/sblog $@)
+}

@@ -1,0 +1,9 @@
+<FilesMatch "(\.(mt|p[lm])|~|db)$">
+  Order deny,allow
+  Deny from All
+</FilesMatch>
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule (.*) index.cgi/$1

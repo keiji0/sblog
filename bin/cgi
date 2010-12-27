@@ -1,0 +1,4 @@
+#!/bin/sh
+( cd $SBLOGDIR && \
+    ./index.cgi | \
+    perl -pe 'not(/href="http/) and s@href="(/[^"]*)@href="file:///cgi-bin/sblog$1@g' )

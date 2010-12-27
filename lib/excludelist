@@ -1,0 +1,9 @@
+- %*
+- Makefile
+- makefile/
+- excludelist
+- #*#
+- bin/
+- *.sql
+- .git
+- .gitignore

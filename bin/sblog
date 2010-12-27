@@ -1,0 +1,2 @@
+#!/bin/sh
+(cd $SBLOGDIR && perl -Ilib/perl -MSBlog::Command -eSBlog::Command::commandexec $@)

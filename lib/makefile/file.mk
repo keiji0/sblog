@@ -1,0 +1,1 @@
+DBPATH = var/main.db
