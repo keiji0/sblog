@@ -1,0 +1,40 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use lib qw(lib/perl);
+use Format::RSS qw(display);
+use StaticCGI::Contents qw(getheadbody);
+use StaticCGI::Util qw(filecontents);
+use Data::Dumper;
+use DateTime::Format::W3CDTF;
+use Format::Date::RFC822;
+
+sub items {
+  my @a;
+  for (@_) {
+    my ($head, $body) = getheadbody filecontents $_;
+    s|^\./||;
+    my $url = $ENV{SITEURL}.$_;
+    $body = $body || '';
+    $body =~ s|^<h1>[^\n]+</h1>||;
+    push @a, {
+      title => $head->{title},
+      link => $url,
+      guid => $url,
+      pubDate => DateTime::Format::W3CDTF->parse_datetime($head->{created})->epoch(),
+      description => '<![CDATA['.($head->{description} || $body).']]>'
+   }
+  }
+  \@a
+}
+
+sub main {
+  display {
+    title => $ENV{SITETITLE},
+    link => $ENV{SITEURL},
+    description => $ENV{SITEDESCRIPTION},
+  }, items @_;
+}
+
+main @ARGV
