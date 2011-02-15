@@ -34,7 +34,8 @@ sub printpage {
       use SBlog::HTML qw(htmlescape cr2br);
       use SBlog::Config qw(config);
       use SBlog::DB qw(db);
-      eval shift(@$cache) or die $@;
+      my $code = shift @$cache;
+      eval $code or die $@."\n".$code."\n";
     } else {
       print $a;
     }

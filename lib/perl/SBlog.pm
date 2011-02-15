@@ -33,12 +33,25 @@ sub start {
     SBlog::Template::templatepage($page);
   }
   sub _postcomment {
+    sub __check_spam {
+      my ($name, $body) = @_;
+      { # URL count
+        my $count = 0;
+        $count++ while $body =~ m|https?://|g;
+        $count > 5 and return 1;
+      }
+      0;
+    }
     use SBlog::Comment qw(postcomment);
     my $page = shift;
     my ($name, $body) = (cgiparam('name'), cgiparam('body'));
     if ($name and $body) {
-      postcomment $page, $name, $body;
-      _showpage $page;
+      if (__check_spam $name, $body) {
+        showtext 'コメント出来ません。'
+      } else {
+        postcomment $page, $name, $body;
+        _showpage $page;
+      }
     } else {
       showtext 'コメントに名前と内容を入力して下さい'
     }
@@ -47,7 +60,8 @@ sub start {
     sub _getindexpage {
       select 'path, title, strftime(\'%Y年%m月%d日\', created) AS created'.
         ' FROM Page'.
-        ' WHERE path LIKE (?) ORDER BY path',
+        ' WHERE path LIKE (?)'.
+        ' ORDER BY Page.created DESC',
         (shift).'%';
     }
     my $path = shift;

@@ -40,7 +40,7 @@ sub show {
         '<dc:date>', fdata($page->{created}) ,'</dc:date>',
         '<link>', $data->{url}, $page->{path}, '</link>';
          print '<description><![CDATA[';
-         printpage $page;
+         eval { printpage $page };
          print ']]></description>',
       '</item>';
   }

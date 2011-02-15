@@ -1,4 +1,5 @@
 (defconst sblog:version "0.1")
+(defvar sblog:path-command-list '("log"))
 
 (defun sblog:exec (&rest args)
   (apply 'call-process "sblog" nil t nil args))
@@ -6,16 +7,20 @@
 (defun sblog:ls ()
   (with-temp-buffer
     (sblog:exec "ls")
-    (split-string (buffer-substring-no-properties (point-min) (point-max)) "\n")))
+    (split-string (buffer-substring-no-properties (point-min) (- (point-max) 1)) "\n")))
+
+(defun sblog:ls* ()
+  (append sblog:path-command-list (sblog:ls)))
 
 (defun sblog:post ()
   (interactive)
-  (anything '((name . "sblog post")
-              (candidates . sblog:ls)
-              (action . (("edit" . sblog:edit)
-                         ("rm" . sblog:rm)))))
-  (unless (anything-get-selection)
-    (sblog:edit (car minibuffer-history))))
+  (let ((x (sblog:ls*)))
+    (anything `((name . "sblog post")
+                (candidates . ,x)
+                (action . (("edit" . sblog:edit)
+                           ("rm" . sblog:rm))))))
+    (unless (anything-get-selection)
+      (sblog:edit (car minibuffer-history))))
 
 (defun sblog:rm (path)
   (with-temp-buffer

@@ -30,7 +30,7 @@ sub parsepage {
  body:
   my $s;
   $s .= $_ while <$src>;
-  $page{body} = $s;
+  $page{body} = $s || ' ';
   \%page;
 }
 
@@ -39,7 +39,7 @@ sub pagecontents {
   my $s = '';
   $s .= 'id: '. ($page->{id}). "\n" if defined $page->{id};
   $s .= 'path: '. ($page->{path}). "\n";
-  $s .= 'title: '. ($page->{title} || 'no title'). "\n";
+  $s .= 'title: '. ($page->{title} || ''). "\n";
   for (keys %{$page->{param}}) {
     $s .= $_. ': '. $page->{param}->{$_}. "\n";
   }
@@ -51,7 +51,7 @@ sub pagecontents {
 sub genpath {
   my $category = shift;
   my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime time;
-  sprintf '/%04d/%02d/%02d/%s', ($year+1900), ($mon+1), $mday, $category;
+  sprintf '/%04d/%02d/%02d/%s', ($year+1900), ($mon+1), $mday, $category || '';
 }
 
 my $commandtable;
@@ -60,8 +60,17 @@ $commandtable = {
     usage => '[path]',
     desc => 'ページのテンプレートを出力する',
     command => sub {
-      my ($args) = @_; 
-      print pagecontents { path => $args->[0] || genpath('life') };
+      my ($args) = @_;
+      my ($path) = @$args;
+      if ($path =~ m|^/|) {
+        print pagecontents { path => $path || genpath('life') };
+      } else {
+        if ('log' eq $path) {
+          print pagecontents { path => genpath };
+        } else {
+          die $path.' not found command.';
+        }
+      }
     },
   },
 
